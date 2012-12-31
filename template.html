@@ -11,7 +11,12 @@
 	<h1 id="name">{NAME}</h1>
 	<h2 id="summary">{SUMMARY}</h2>
 	<div id="image"><img src="{IMAGE}" alt="{NAME}" /></div>
-	<div id="about"><p>{ABOUT}</p></div>
+	<div id="about">
+		<p>{ABOUT}</p>
+		<p><strong>Webová stránka:</strong> <a href="{WEBPAGE}" title="Webová stránka programu {NAME}">{WEBPAGE_SIMPLE}</a></p>
+		<p><strong>Licence:</strong> {LICENSE}</p>
+		<p id="install"><a href="{INSTALL}">Nainstalovat</a></p>
+	</div>
 	<div id="footer">{FOOTER}</div>
 </body>
 </html>
