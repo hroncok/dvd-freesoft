@@ -3,7 +3,8 @@
 # Create ISO dir and backup the old one
 rm ISO.old -rf
 mv ISO ISO.old
-mkdir ISO
+mkdir -p ISO/images
+mkdir ISO/installers
 
 # Parse data
 INPUT=dvd-freesoft.csv
@@ -59,6 +60,14 @@ do
 	echo -e "\t\t\t\t<td><a class=\"more\" href=\"$FILENAME.html\">Více...</a></td>" >> ISO/$CATDIR/index.html
 	echo -e "\t\t\t</tr>" >> ISO/$CATDIR/index.html
 	
+	# Download the logo and convert it
+	echo "Downloading the logo"
+	extension=${LOGO##*.}
+	wget -q "$LOGO" -O tmpimg.$extension
+	[ -f tmpimg.svg ] && inkscape --export-png=tmpimg.png --export-width=500 tmpimg.svg && extension=png
+	convert tmpimg.$extension -trim -resize 32x32\> ISO/images/$FILENAME-mini.png
+	convert tmpimg.$extension -trim -resize 256x256\> ISO/images/$FILENAME.png
+	rm tmpimg.*
 done < $INPUT
 IFS=$OLDIFS
 
@@ -69,3 +78,6 @@ do
 	cat catend.html >> $CAT/index.html
 	sed -i "s|{FOOTER}|`cat footer.html`|g" $CAT/index.html
 done
+
+# Remove colateral damage
+rm -f ISO/installers/index.html ISO/images/index.html 
