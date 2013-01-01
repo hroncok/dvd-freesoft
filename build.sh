@@ -36,6 +36,10 @@ do
 	WEBPAGE_SIMPLE=`echo $WEBPAGE_SIMPLE | sed 's|https://||'`
 	WEBPAGE_SIMPLE=`echo $WEBPAGE_SIMPLE | sed 's|/$||'`
 	
+	# Get the installer filename
+	SFHACK=`echo $DOWNLOAD | sed 's|/download$||'`
+	INSTALL="`basename $SFHACK`"
+	
 	# Creating app page
 	echo "Creating ISO/$CATDIR/$FILENAME.html"
 	cp template.html ISO/$CATDIR/$FILENAME.html
@@ -48,7 +52,7 @@ do
 	sed -i "s|{WEBPAGE}|$WEBPAGE|g" ISO/$CATDIR/$FILENAME.html
 	sed -i "s|{WEBPAGE_SIMPLE}|$WEBPAGE_SIMPLE|g" ISO/$CATDIR/$FILENAME.html
 	sed -i "s|{LICENSE}|$LICENSE|g" ISO/$CATDIR/$FILENAME.html
-	sed -i "s|{INSTALL}|$INSTALL|g" ISO/$CATDIR/$FILENAME.html
+	sed -i "s|{INSTALL}|../installers/$INSTALL|g" ISO/$CATDIR/$FILENAME.html
 	sed -i "s|{FOOTER}|`cat footer.html`|g" ISO/$CATDIR/$FILENAME.html
 	sed -i "s|{IMAGE}|../images/$FILENAME.png|g" ISO/$CATDIR/$FILENAME.html
 	
@@ -68,6 +72,14 @@ do
 	convert tmpimg.$extension -trim -resize 32x32\> ISO/images/$FILENAME-mini.png
 	convert tmpimg.$extension -trim -resize 256x256\> ISO/images/$FILENAME.png
 	rm tmpimg.*
+	
+	# Download the installer and save it
+	echo "Downloading the installer"
+	if [[ $1 == "fake" ]]; then
+		touch "ISO/installers/$INSTALL"
+	else
+		wget -q "$DOWNLOAD" -O "ISO/installers/$INSTALL"
+	fi
 done < $INPUT
 IFS=$OLDIFS
 
